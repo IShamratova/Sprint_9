@@ -19,4 +19,13 @@
 В файле **test_create_recipe.py**:
 <br />
 Проверка создания рецепта.
-
+<br />
+<br />
+<br />
+**Ссылка на Jenkins в облаке Yandex Cloud:**
+<br />
+http://158.160.179.250:8080/login?from=%2F
+<br />
+**логин:** reviewer
+<br />
+**пароль:** 123456

@@ -1,0 +1,68 @@
+FROM jenkins/jenkins:lts
+
+USER root
+
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-venv \
+    jq \
+    wget \
+    unzip \
+    curl \
+    gnupg \
+    ca-certificates \
+    fonts-liberation \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libgdk-pixbuf2.0-0 \
+    libnspr4 \
+    libnss3 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    libxkbcommon0 \
+    libdrm2 \
+    libgbm1 \
+    libxss1 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libgtk-3-0 \
+    libxshmfence1 \
+    libxext6 \
+    libxfixes3 \
+    libglib2.0-0 \
+    libjpeg62-turbo \
+    libappindicator3-1 \
+    libcairo2 \
+    xdg-utils \
+    xvfb \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN /bin/bash -c 'jenkins-plugin-cli --plugins allure-jenkins-plugin:latest'
+
+RUN LATEST_VERSION="135.0.7049.42" && \
+    wget -q -O /tmp/chrome-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/$LATEST_VERSION/linux64/chrome-linux64.zip && \
+    unzip /tmp/chrome-linux64.zip -d /opt/ && \
+    mv /opt/chrome-linux64 /opt/chrome && \
+    ln -s /opt/chrome/chrome /usr/bin/google-chrome && \
+    rm /tmp/chrome-linux64.zip && \
+    \
+    wget -q -O /tmp/chromedriver.zip https://storage.googleapis.com/chrome-for-testing-public/$LATEST_VERSION/linux64/chromedriver-linux64.zip && \
+    unzip /tmp/chromedriver.zip -d /opt/ && \
+    mv /opt/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver && \
+    chmod +x /usr/local/bin/chromedriver && \
+    rm /tmp/chromedriver.zip
+
+RUN LATEST_VERSION="v0.36.0" && \
+    apt-get update && apt-get install -y firefox-esr && \
+    curl -sSL https://github.com/mozilla/geckodriver/releases/download/$LATEST_VERSION/geckodriver-$LATEST_VERSION-linux64.tar.gz -o /tmp/geckodriver.tar.gz && \
+    tar -xzf /tmp/geckodriver.tar.gz -C /usr/local/bin/ && \
+    chmod +x /usr/local/bin/geckodriver && \
+    rm /tmp/geckodriver.tar.gz
+
+USER jenkins
